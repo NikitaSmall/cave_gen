@@ -1,2 +1,7 @@
 nbproject/*
 nbproject/
+
+.idea/
+.idea/*
+.idea/GameRuby.iml
+
