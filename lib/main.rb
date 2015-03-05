@@ -37,6 +37,7 @@ class Map
     @height = height
     @width = width
     @stop = 0
+    @error = 70
 
     rows, cols = @width, @height
     @grid = Array.new(rows) { Array.new(cols) {Tile.new} }
@@ -88,7 +89,7 @@ class Map
   #TODO: модифицировать метод максимально уменьшив влияние вероятности и уменьшив "пустые итерации" к минимуму
   # алгоритм выбора следующей точки. Место наибольшей сложности
   def get_next_point(y_coord, x_coord)
-    while @stop < 50 do
+    while @stop < @error do
       direction = rand(0..3)
       case direction
         when 0
@@ -137,7 +138,7 @@ class Map
 
   # метод проверки генерации. Завершает её, если число остановки (количества ошибок) стало слишком большим.
   def check_generation
-    if @stop < 50
+    if @stop < @error
       return true
     else
       return false
@@ -147,7 +148,7 @@ class Map
 end
 
 # создание и генерация карты
-@map = Map.new(12, 12)
+@map = Map.new(15, 15)
 
 @map.generate_map
 @map.show_map
