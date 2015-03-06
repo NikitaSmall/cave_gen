@@ -37,7 +37,7 @@ class Map
     @height = height
     @width = width
     @stop = 0
-    @error = 70
+    @error = 100
 
     rows, cols = @width, @height
     @grid = Array.new(rows) { Array.new(cols) {Tile.new} }
@@ -56,7 +56,7 @@ class Map
   # метод содания карты. Берётся случайная первая точка, после чего выбирается направление и осуществляется проверка
   # на возможность проложить пол. Циклично, до тех пор, пока не накопится счётик остановки
   def generate_map
-    @curr_point = get_start_point
+    @curr_point = get_rand_point
 
     while check_generation do
       check_point_to_floor(@curr_point[0], @curr_point[1])
@@ -66,7 +66,7 @@ class Map
   end
 
   # выбор первой случайной точки
-  def get_start_point
+  def get_rand_point
     @rand_point = [rand(1..@height-2), rand(1..@width-2)]
   end
 
@@ -86,9 +86,54 @@ class Map
     end
   end
 
+  def get_next_point(y_coord, x_coord)
+    while @stop < @error do
+      directions = Array.new
+      if y_coord - 1 > 0
+        if @grid[y_coord - 1][x_coord].touched != 1
+          directions << 0
+        end
+      end
+      if x_coord + 1 < @width - 1
+        if @grid[y_coord][x_coord + 1].touched != 1
+          directions << 1
+        end
+      end
+      if y_coord + 1 < @height - 1
+        if @grid[y_coord + 1][x_coord].touched != 1
+          directions << 2
+        end
+      end
+      if x_coord - 1 > 0
+        if @grid[y_coord][x_coord - 1].touched != 1
+          directions << 3
+        end
+      end
+
+      unless directions.empty?
+        direction = directions.sample
+      else
+        y_coord, x_coord = get_rand_point
+        @stop += 10
+        next
+      end
+      case direction
+        when 0
+          return [y_coord - 1, x_coord]
+        when 1
+          return [y_coord, x_coord + 1]
+        when 2
+          return [y_coord + 1, x_coord]
+        when 3
+          return [y_coord, x_coord - 1]
+      end
+
+    end
+  end
+
   #TODO: модифицировать метод максимально уменьшив влияние вероятности и уменьшив "пустые итерации" к минимуму
   # алгоритм выбора следующей точки. Место наибольшей сложности
-  def get_next_point(y_coord, x_coord)
+  def get_next_point_old(y_coord, x_coord)
     while @stop < @error do
       direction = rand(0..3)
       case direction
