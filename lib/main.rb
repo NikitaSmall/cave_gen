@@ -37,7 +37,8 @@ class Map
     @height = height
     @width = width
     @stop = 0
-    @error = 100
+    @error = 1000
+    @opacity_challenge = 10
 
     rows, cols = @width, @height
     @grid = Array.new(rows) { Array.new(cols) {Tile.new} }
@@ -81,11 +82,12 @@ class Map
         end
       end
     end
-    if @grid[y_coord][x_coord].opacity <= 4
+    if @grid[y_coord][x_coord].opacity <= @opacity_challenge
       @grid[y_coord][x_coord].floor = 1
     end
   end
 
+  # алгоритм выбора следующей точки. Место наибольшей сложности
   def get_next_point(y_coord, x_coord)
     while @stop < @error do
       directions = Array.new
@@ -131,56 +133,6 @@ class Map
     end
   end
 
-  #TODO: модифицировать метод максимально уменьшив влияние вероятности и уменьшив "пустые итерации" к минимуму
-  # алгоритм выбора следующей точки. Место наибольшей сложности
-  def get_next_point_old(y_coord, x_coord)
-    while @stop < @error do
-      direction = rand(0..3)
-      case direction
-        when 0
-          if y_coord - 1 > 0
-            if @grid[y_coord - 1][x_coord].touched != 1
-              return [y_coord - 1, x_coord]
-            else
-              @stop += 1
-            end
-          else
-            @stop += 1
-          end
-        when 1
-          if x_coord + 1 < @width - 1
-            if @grid[y_coord][x_coord + 1].touched != 1
-              return [y_coord, x_coord + 1]
-            else
-              @stop += 1
-            end
-          else
-            @stop += 1
-          end
-        when 2
-          if y_coord + 1 < @height - 1
-            if @grid[y_coord + 1][x_coord].touched != 1
-              return [y_coord + 1, x_coord]
-            else
-              @stop += 1
-            end
-          else
-            @stop += 1
-          end
-        when 3
-          if x_coord - 1 > 0
-            if @grid[y_coord][x_coord - 1].touched != 1
-              return [y_coord, x_coord - 1]
-            else
-              @stop += 1
-            end
-          else
-            @stop += 1
-          end
-        end
-      end
-  end
-
   # метод проверки генерации. Завершает её, если число остановки (количества ошибок) стало слишком большим.
   def check_generation
     if @stop < @error
@@ -193,7 +145,7 @@ class Map
 end
 
 # создание и генерация карты
-@map = Map.new(15, 15)
+@map = Map.new(80, 80)
 
 @map.generate_map
 @map.show_map
