@@ -10,10 +10,10 @@ class Map
     @width = width
     @stop = 0
     @error = 100
-    @opacity_challenge = 9
+    @opacity_challenge = 8
 
     rows, cols = @width, @height
-    @grid = Array.new(rows) { Array.new(cols) {Tile.new} }
+    @grid = Array.new(cols) { Array.new(rows) {Tile.new} }
   end
 
   # показываем всю карту
