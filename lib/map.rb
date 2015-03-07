@@ -1,4 +1,6 @@
 require '../lib/tile'
+require '../lib/creature'
+require 'enumerator'
 
 # класс карты, в котором и происходит всё веселье
 class Map
@@ -14,13 +16,19 @@ class Map
 
     rows, cols = @width, @height
     @grid = Array.new(cols) { Array.new(rows) {Tile.new} }
+    @hero = nil
   end
 
+  #TODO: модифицировать метод так, чтобы отображение многих монстров не превратилось в проблему
   # показываем всю карту
   def show_map
-    @grid.each do |y|
-      y.each do |x|
-        x.print_tile
+    @grid.each_with_index do |y, y_coord|
+      y.each_with_index do |x, x_coord|
+        if @hero.x_coord == x_coord && @hero.y_coord == y_coord
+          print @hero.symbol
+        else
+          x.print_tile
+        end
       end
       print "\n"
     end
@@ -31,11 +39,12 @@ class Map
   def generate_map
     @curr_point = get_rand_point
 
-    while check_generation do
+    while end_generation? do
       check_point_to_floor(@curr_point[0], @curr_point[1])
       @curr_point = get_next_point(@curr_point[0], @curr_point[1])
     end
 
+    get_hero
   end
 
   # выбор первой случайной точки
@@ -61,7 +70,7 @@ class Map
 
   # алгоритм выбора следующей точки. Место наибольшей сложности
   def get_next_point(y_coord, x_coord)
-    while @stop < @error do
+    while end_generation? do
       directions = Array.new
       if y_coord - 1 > 0
         if @grid[y_coord - 1][x_coord].touched != 1
@@ -106,8 +115,34 @@ class Map
   end
 
   # метод проверки генерации. Завершает её, если число остановки (количества ошибок) стало слишком большим.
-  def check_generation
+  def end_generation?
     if @stop < @error
+      return true
+    else
+      return false
+    end
+  end
+
+  def get_hero
+    unless @hero
+      y_coord, x_coord = get_rand_point
+      loop do
+        break if is_floor?(y_coord, x_coord)
+        y_coord, x_coord = get_rand_point
+      end
+      @hero = Hero.new(y_coord, x_coord, "NikitaSmall")
+      return @hero
+    else
+      return @hero
+    end
+  end
+
+  #def add_objects_to_map
+  #  @hero = Hero.new()
+  #end
+
+  def is_floor?(y_coord, x_coord)
+    if @grid[y_coord][x_coord].floor == 1
       return true
     else
       return false
