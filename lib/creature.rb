@@ -11,8 +11,6 @@ class Creature
 end
 
 class Hero < Creature
-  attr_accessor :x_coord
-  attr_accessor :y_coord
   attr_accessor :name
   attr_accessor :symbol
 
