@@ -5,7 +5,7 @@
 require '../lib/map'
 
 # создание и генерация карты
-@map = Map.new(20, 20)
+@map = Map.new(40, 60)
 
 @map.generate_map
 @map.show_map

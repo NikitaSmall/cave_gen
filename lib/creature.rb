@@ -6,6 +6,7 @@ class Creature
   def initialize(y_coord, x_coord)
     @y_coord = y_coord
     @x_coord = x_coord
+    @symbol = " "
   end
 
 end

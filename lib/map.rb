@@ -12,10 +12,18 @@ class Map
     @width = width
     @stop = 0
     @error = 100
-    @opacity_challenge = 8
+    @opacity_challenge = 5
 
     rows, cols = @width, @height
-    @grid = Array.new(cols) { Array.new(rows) {Tile.new} }
+
+    @grid = Array.new(cols)
+    cols.times do |y|
+      @grid[y] = Array.new(rows)
+      rows.times do |x|
+        @grid[y][x] = Wall.new(y, x)
+      end
+    end
+
     @hero = nil
   end
 
@@ -37,8 +45,8 @@ class Map
   # метод содания карты. Берётся случайная первая точка, после чего выбирается направление и осуществляется проверка
   # на возможность проложить пол. Циклично, до тех пор, пока не накопится счётик остановки
   def generate_map
-    @curr_point = get_rand_point
 
+    @curr_point = get_rand_point
     while end_generation? do
       check_point_to_floor(@curr_point[0], @curr_point[1])
       @curr_point = get_next_point(@curr_point[0], @curr_point[1])
@@ -58,13 +66,13 @@ class Map
     @grid[y_coord][x_coord].touched = 1
     (y_coord-1..y_coord+1).each do |y|
       (x_coord-1..x_coord+1).each do |x|
-        if @grid[y][x].floor == 1
+        if @grid[y][x].is_floor?
           @grid[y_coord][x_coord].opacity += 1
         end
       end
     end
-    if @grid[y_coord][x_coord].opacity <= @opacity_challenge
-      @grid[y_coord][x_coord].floor = 1
+    if @grid[y_coord][x_coord].opacity < @opacity_challenge
+      @grid[y_coord][x_coord] = Floor.new(y_coord, x_coord, @grid[y_coord][x_coord].opacity)
     end
   end
 
@@ -142,11 +150,7 @@ class Map
   #end
 
   def is_floor?(y_coord, x_coord)
-    if @grid[y_coord][x_coord].floor == 1
-      return true
-    else
-      return false
-    end
+    return @grid[y_coord][x_coord].is_floor?
   end
 
 end
