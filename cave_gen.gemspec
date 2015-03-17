@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["nikitasosnov@yahoo.com"]
 
   spec.summary       = "A little gem to create a random caves. For your games (roguelikes or similar) or just for fun."
-  spec.homepage      = "TODO: Put your gem's website or public repo URL here."
+  spec.homepage      = "https://github.com/NikitaSmall/cave_gen.git"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
